@@ -1,0 +1,13 @@
+1. need to take backup forom particular file folder as zip and move to backup folde
+later it need to move to  backup server on backup folder 
+backup file in first needs to delete in weekly basis
+
+#!/bin/bash
+zip -r xfusioncorp_ecommerce.zip /var/www/html/ecommerce
+mv xfusioncorp_ecommerce.zip /backup/
+scp -r /backup/xfusioncorp_ecommerce.zip clint@172.16.238.16:/backup/
+echo "file copied"
+
+crontab -e
+0 0 * * 0 find /backup/xfusioncorp_ecommerce.zip -type f -mtime +7 -delete
+
