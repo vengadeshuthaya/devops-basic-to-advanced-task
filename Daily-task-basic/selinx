@@ -1,0 +1,34 @@
+1. Install SELinux (if not already installed)
+For CentOS 7 / 8 / Stream, run:
+sudo yum install -y selinux-policy selinux-policy-targeted policycoreutils
+For CentOS Stream 9 / RHEL 9-based systems:
+sudo dnf install -y selinux-policy selinux-policy-targeted policycoreutils
+Verify installation:
+rpm -qa | grep selinux
+
+2. Check SELinux Current Mode
+To see the current mode:
+getenforce
+Possible outputs:
+Enforcing → SELinux is active and enforcing policy.
+Permissive → SELinux is logging violations but not enforcing.
+Disabled → SELinux is turned off.
+
+3.Temporarily Disable SELinux
+To disable SELinux without rebooting, use:
+sudo setenforce 0
+Verify:
+getenforce
+Output should show:
+Permissive
+⚠️ This change is temporary — it will revert after reboot.
+
+4.Permanently Disable SELinux
+To disable SELinux permanently:
+Open the SELinux configuration file:
+sudo vi /etc/selinux/config
+Locate the following line:
+SELINUX=enforcing
+Change it to:
+SELINUX=disabled
+Save and exit (Esc, then :wq).
