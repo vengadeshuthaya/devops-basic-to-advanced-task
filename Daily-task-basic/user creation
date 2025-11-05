@@ -1,0 +1,61 @@
+1. Create a User with Non-Interactive Shell
+sudo useradd -s /sbin/nologin <username>
+
+Verify:
+grep deployuser /etc/passwd
+You’ll see something like:
+<username>:x:1003:1003::/home/<username>:/sbin/nologin
+✅ This means the user exists but cannot log in via SSH or terminal.
+
+2. Create a User with Expiry Date
+
+sudo useradd -e YYYY-MM-DD <username>
+
+verify:
+sudo chage -l testuser
+
+3. Combine Both Options
+
+You can also create a non-interactive user with an expiry date together:
+
+sudo useradd -s /sbin/nologin -e 2025-12-31 tempdeploy
+
+Verify:
+grep tempdeploy /etc/passwd
+sudo chage -l tempdeploy
+
+4. Create a Regular User
+sudo useradd <username>
+Example:
+sudo useradd devopsuser
+sudo passwd devopsuser
+
+5. Add User to a Specific Group
+sudo usermod -aG docker <user name>
+
+6. Add User to the Sudoers List (Root Permission)
+Add to wheel group (Recommended for CentOS/RHEL)
+
+sudo usermod -aG wheel devopsadmin
+
+Verify that the wheel group has sudo privileges:
+sudo grep wheel /etc/sudoers
+
+7. Add User Directly in Sudoers File
+
+Edit sudoers safely using visudo:
+sudo visudo
+Add this line at the end:
+devopsadmin  ALL=(ALL)  NOPASSWD:ALL
+or (if you want password prompt):
+devopsadmin  ALL=(ALL)  ALL
+Save and exit (Esc, then :wq).
+✅ The user now has full root permissions.
+
+8. Create a File in /etc/sudoers.d/ (Best Practice for Automation)
+Create a new sudoers file:
+
+echo "devopsadmin ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/devopsadmin
+
+Set correct permissions:
+sudo chmod 440 /etc/sudoers.d/devopsadmin
