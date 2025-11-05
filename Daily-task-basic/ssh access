@@ -1,0 +1,38 @@
+ Linux SSH Authentication without roor user and password
+
+ 1. Verify User and SSH Access
+ On Jump Host:
+ssh tony@<app_server_1_ip>
+If you can log in with a password — it’s working; we’ll now make it passwordless.
+
+2.Generate SSH Key for user
+on jump host
+ssh-keygen -t rsa -b 4096
+
+ls -l /home/<user>/.ssh/
+
+3.copy the Public Key to  App Server
+ssh-copy-id -i ~/.ssh/id_rsa.pub <app serveruser>@<app_server_1_ip>
+
+4.Verify Passwordless Access
+Now test from jump host:
+
+ssh <app serveruser>@<app_server_1_ip>
+---------------------------------------------------
+Task to give access from jump to app server using there keys
+1. create user in app server
+useradd -m -s /bin/bash vengadesh
+
+2.Create SSH Directory for the User
+mkdir -p /home/vengadesh/.ssh
+
+3.copy your public key into authorizedkey
+echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDkz... your_email@example.com" >> /home/vengadesh/.ssh/authorized_keys
+
+4.Fix permissions:
+chmod 600 /home/vengadesh/.ssh/authorized_keys
+chown -R vengadesh:vengadesh /home/vengadesh/.ssh
+chmod 700 /home/vengadesh/.ssh
+5. Test SSH from Your jump Machine
+using private key
+ssh -i <private key> vengadesh@hostip
